@@ -1,5 +1,7 @@
 package com.portfolio.demo.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +25,24 @@ public class UserService {
         return repository.findById(id).orElseThrow(()-> new RuntimeException("user not found with ID: " + id));
     }
 
+    public List<User> getAllUsers(){
+        return repository.findAll();
+    }
+
     public User follow(Long id, Long followingId) {
         User user =  repository.findById(id).orElseThrow(()-> new RuntimeException("user not found with ID: " + id));
-        User followingUser = repository.findById(id).orElseThrow(()-> new RuntimeException("user not found with ID: " + followingId));
+        User followingUser = repository.findById(followingId).orElseThrow(()-> new RuntimeException("user not found with ID: " + followingId));
+
+        System.out.println("user id:" + id);
+        System.out.println("being followed user id: " + followingId);
 
         if (!id.equals(followingId)){
+
             user.follow(followingUser);
+            repository.save(user);
 
             repository.save(user);
-            repository.save(followingUser);
+
             return user;
         }else {
             throw new RuntimeException("Same id to follow!");
@@ -41,15 +52,11 @@ public class UserService {
 
     public User unfollow(Long id, Long followingId) {
         User user =  repository.findById(id).orElseThrow(()-> new RuntimeException("user not found with ID: " + id));
-        User followingUser = repository.findById(id).orElseThrow(()-> new RuntimeException("user not found with ID: " + followingId));
-
-
-        user.getFollowing().remove(followingUser);
-        followingUser.getFollowers().remove(user);
+        User followingUser = repository.findById(followingId).orElseThrow(()-> new RuntimeException("user not found with ID: " + followingId));
 
         user.unfollow(followingUser);
         repository.save(user);
-        repository.save(followingUser);
+        
         return user;
     }
 

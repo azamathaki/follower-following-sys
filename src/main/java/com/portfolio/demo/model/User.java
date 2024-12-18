@@ -110,12 +110,12 @@ public class User {
 
     // Helper methods to manage relationships
     public void follow(User user) {
-        following.add(user);
+        this.following.add(user);
         user.getFollowers().add(this);
     }
 
     public void unfollow(User user) {
-        following.remove(user);
+        this.following.remove(user);
         user.getFollowers().remove(this);
     }
 }
